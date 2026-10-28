@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d0f0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="지리산">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>성삼재에서 정령치까지</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -414,6 +418,20 @@ footer.wrap { padding-block: 40px 56px; display: flex; flex-direction: column; g
   .panel p { display: none; }
 }
 
+/* immersive: phone held sideways, the map takes the whole screen and the controls float over it */
+.exitbtn { display: none; }
+.sim.immersive { position: fixed; inset: 0; z-index: 50; height: 100%; height: 100dvh; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+.sim.immersive > .simhead, .sim.immersive > .stage, .sim.immersive > .cockpit { grid-area: 1 / 1; }
+.sim.immersive .simhead { align-self: start; grid-template-columns: minmax(0, 1fr) auto; align-items: start; border: 0; background: linear-gradient(to bottom, rgba(8,10,7,.8), rgba(8,10,7,0)); padding-top: max(8px, env(safe-area-inset-top, 0px)); padding-bottom: 26px; pointer-events: none; }
+.sim.immersive .simhead > * { pointer-events: auto; }
+.sim.immersive .brand, .sim.immersive .meta-r, .sim.immersive .glegend, .sim.immersive .scrollhint, .sim.immersive .stages { display: none !important; }
+.sim.immersive .card { border-left: 0; padding-left: 0; max-width: 460px; }
+.sim.immersive .exitbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(241,236,221,.25); background: rgba(13,15,12,.72); color: var(--cream); font: 600 13px var(--f-body); cursor: pointer; }
+.sim.immersive .cockpit { align-self: end; border: 0; background: linear-gradient(to top, rgba(8,10,7,.88) 45%, rgba(8,10,7,0)); padding-top: 28px; padding-bottom: max(8px, env(safe-area-inset-bottom, 0px)); gap: 6px; }
+.sim.immersive #b-all { margin-left: auto; }
+.sim.immersive .track { min-height: 30px; }
+.sim.immersive .stage canvas.gl { touch-action: none; }
+
 /* ---------- v11 parts ---------- */
 /* intro: retro poster, photo-led, hand-drawn overlay */
 .intro { display: flex; flex-direction: column; gap: 22px; }
@@ -763,6 +781,7 @@ html, body { overflow-x: clip; }
         <span class="cr" id="card-cr" hidden></span>
       </div>
     </div>
+    <button class="exitbtn" id="b-exit" type="button">닫기<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
     <div class="meta-r">Jirisan National Park<br><b>2026.11.14 SAT</b> / 08:40 Start<br>35.3478N 127.5162E</div>
   </header>
 
@@ -1881,11 +1900,21 @@ document.querySelectorAll(".rail-box").forEach(box => {
   function orient() {
     if (!coarse) return;
     if (land.matches) {
-      const wasShown = !$("ov-rotate").hidden;
-      $("ov-rotate").hidden = true; document.documentElement.style.overflow = "";
-      if (wasShown || !st.started) setTimeout(() => { $("sim").scrollIntoView({ block: "start" }); autoStart(); }, 400);
-    } else if (!st.started) { $("ov-rotate").hidden = false; document.documentElement.style.overflow = "hidden"; }
+      $("ov-rotate").hidden = true;
+      if (!immersiveOff) setImmersive(true);
+      setTimeout(autoStart, 400);
+    } else {
+      immersiveOff = false; setImmersive(false);
+      if (!st.started) { $("ov-rotate").hidden = false; document.documentElement.style.overflow = "hidden"; }
+    }
   }
+  let immersiveOff = false;
+  function setImmersive(on) {
+    sim.classList.toggle("immersive", on);
+    document.documentElement.style.overflow = on ? "hidden" : "";
+    if (!on && st.started) sim.scrollIntoView({ block: "start" });
+  }
+  $("b-exit").addEventListener("click", () => { immersiveOff = true; setImmersive(false); });
   document.body.appendChild($("ov-rotate")); // escape the simulator box so the cover fills the screen
   const closeRotate = () => { $("ov-rotate").hidden = true; document.documentElement.style.overflow = ""; };
   land.addEventListener ? land.addEventListener("change", orient) : land.addListener(orient);
@@ -1897,7 +1926,7 @@ document.querySelectorAll(".rail-box").forEach(box => {
   new IntersectionObserver(es => es.forEach(en => { st.visible = en.isIntersecting; })).observe(sim);
 
   const stage = $("stage");
-  function resize() { const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < 640 ? 60 : 50; camera.updateProjectionMatrix(); }
+  function resize() { const w = stage.clientWidth, h = stage.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < 640 ? 60 : 50; camera.zoom = sim.classList.contains("immersive") && w / h > 1.7 ? 1.35 : 1; camera.updateProjectionMatrix(); }
   new ResizeObserver(resize).observe(stage); resize();
 
   let last = performance.now();
