@@ -333,6 +333,7 @@ table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 14p
 th, td { text-align: left; padding: 11px 12px 11px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font: 500 11px var(--f-mono); letter-spacing: .1em; color: var(--fog); text-transform: uppercase; }
 td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.t { font-weight: 700; color: var(--cream); padding-right: 20px; }
 td .g { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; }
 tr.leg td { font: 500 11px var(--f-mono); letter-spacing: .12em; color: var(--lime); padding-top: 18px; }
 tr.turn td { color: var(--signal); }
@@ -734,22 +735,41 @@ html, body { overflow-x: clip; }
   .pace .note { font-size: 13.5px; }
   .legend { font-size: 13.5px; gap: 12px; }
 
-  /* table becomes a stacked list */
-  .table-wrap { overflow: visible; }
+  /* table becomes a timeline: arrival time on the left, a rail with the grade dot, details on the right */
+  .table-wrap { overflow: visible; border-top: 0; }
   .table-wrap table { min-width: 0; display: block; font-size: 14px; }
   .table-wrap thead { display: none; }
   .table-wrap tbody { display: flex; flex-direction: column; }
-  .table-wrap tr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
-  .table-wrap td { padding: 0; border: 0; min-width: 0; }
-  .table-wrap td:first-child { grid-column: 1 / -1; font-weight: 700; font-size: 15px; }
-  .table-wrap td:last-child { grid-column: 1 / -1; color: var(--fog); font-size: 13.5px; }
-  .table-wrap td.num { display: flex; flex-direction: column; font-size: 14px; white-space: normal; }
-  .table-wrap td.num::before { content: attr(data-l); font: 500 10px var(--f-mono); letter-spacing: .08em; color: var(--fog); }
+  .table-wrap tr { position: relative; display: grid; grid-template-columns: 50px 22px auto auto minmax(0, 1fr); column-gap: 14px; row-gap: 6px; padding: 14px 0; }
+  .table-wrap tr::before { content: ""; position: absolute; left: 75px; top: 0; bottom: 0; width: 1px; background: var(--line); }
+  .table-wrap td { padding: 0; border: 0; min-width: 0; color: var(--cream); }
+  .table-wrap td:nth-child(2) { grid-column: 3 / -1; grid-row: 1; font-weight: 700; font-size: 16px; line-height: 1.3; }
+  .table-wrap td:nth-child(2) .g { position: absolute; left: 70px; top: 19px; width: 11px; height: 11px; margin: 0; box-shadow: 0 0 0 3px var(--night); }
+  .table-wrap td .g[style*="transparent"] { box-sizing: border-box; border: 2px solid var(--cream); background: var(--night) !important; }
+  .table-wrap td.num { display: flex; align-items: baseline; gap: 5px; grid-row: 2; font-size: 13.5px; white-space: nowrap; color: #d3d8cb; }
+  .table-wrap td.num::before { content: attr(data-l); font: 500 11px var(--f-body); color: var(--fog); }
   .table-wrap td.num:empty { display: none; }
-  .table-wrap tr.leg { display: block; padding: 18px 0 6px; border-bottom: 0; }
-  .table-wrap tr.leg td { padding: 0; }
-  .table-wrap tr.turn td:first-child { color: var(--signal); }
-  .table-wrap tr.total { border-bottom: 0; }
+  .table-wrap td:nth-child(3) { grid-column: 3; }
+  .table-wrap td:nth-child(4) { grid-column: 4; }
+  .table-wrap td:nth-child(5) { grid-column: 5; }
+  .table-wrap td.t { grid-column: 1; grid-row: 1 / span 3; flex-direction: column; gap: 2px; font: 700 17px/1.25 var(--f-body); color: var(--cream); }
+  .table-wrap td.t::before { display: none; }
+  .table-wrap td:last-child { grid-column: 3 / -1; grid-row: 3; color: var(--fog); font-size: 13.5px; line-height: 1.45; }
+  .table-wrap tr.leg { display: block; padding: 26px 0 6px; border-top: 1px solid var(--line); }
+  .table-wrap tr.leg:first-child { border-top: 2px solid var(--cream); padding-top: 18px; }
+  .table-wrap tr.leg::before { display: none; }
+  .table-wrap tr.leg td { padding: 0; font: 600 11.5px var(--f-body); letter-spacing: .06em; color: var(--lime); }
+  .table-wrap tr.turn { background: rgba(241,236,221,.04); border-radius: 10px; }
+  .table-wrap tr.turn td { color: var(--cream); }
+  .table-wrap tr.turn td:nth-child(2) { color: var(--signal); }
+  .table-wrap tr.turn td:nth-child(2) .g { box-shadow: 0 0 0 3px #141612; }
+  .table-wrap tr.total { margin-top: 14px; padding: 14px 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; column-gap: 16px; border-radius: 10px; background: var(--panel, #161914); border: 1px solid var(--line); }
+  .table-wrap tr.total::before { display: none; }
+  .table-wrap tr.total td { grid-column: auto; grid-row: auto; }
+  .table-wrap tr.total td:nth-child(2) { grid-column: 1 / -1; grid-row: 1; font-size: 15px; }
+  .table-wrap tr.total td.num { flex-direction: column; gap: 2px; font: 700 17px/1.2 var(--f-body); color: var(--cream); }
+  .table-wrap tr.total td.num::before { order: 0; font-size: 10.5px; font-weight: 500; }
+  .table-wrap tr.total td:last-child { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid var(--line); }
 
   /* footer */
   .wordmark { font-size: clamp(52px, 18vw, 92px); }
@@ -760,7 +780,9 @@ html, body { overflow-x: clip; }
   .gauge strong { font-size: 16px; }
   .gauge, .gauge + .gauge { padding: 0 6px; }
   .play span { font-size: 13px; }
-  .table-wrap tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .table-wrap tr { column-gap: 10px; }
+  .table-wrap td.num::before { display: none; }
+  .table-wrap tr.total td.num::before { display: block; }
 }
 
 </style>
@@ -1024,7 +1046,7 @@ html, body { overflow-x: clip; }
       </div>
       <span class="note" id="pace-note"></span>
     </div>
-    <div class="table-wrap"><table><thead><tr><th>지점</th><th>구간 거리</th><th>오르막</th><th>걷는 시간</th><th>도착 예정</th><th>지점 정보</th></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="table-wrap"><table><thead><tr><th>도착 예정</th><th>지점</th><th>구간 거리</th><th>오르막</th><th>걷는 시간</th><th>지점 정보</th></tr></thead><tbody id="tbody"></tbody></table></div>
     <p class="small">지도 데이터로 계산한 값으로 현장 이정표와 다를 수 있습니다. 정령치 매점 운영이 불확실하므로 도시락을 챙깁니다.</p>
   </section>
 
@@ -1350,9 +1372,9 @@ function renderTable() {
     const gc = k ? GCOL[gClass(gradeAt(mid))] : "transparent";
     const name = k === 0 ? p.name + " 출발" : k === SCHED.rows.length - 1 ? p.name + " 도착" : p.name;
     const info = r.i === 4 ? p.info + `, 점심 ${r.rest}분` : p.info;
-    html += `<tr class="${r.i === 4 ? "turn" : ""}"><td><span class="g" style="background:${gc}"></span>${name}</td><td class="num" data-l="구간 거리">${k ? (r.s.d / 1000).toFixed(1) + " km" : ""}</td><td class="num" data-l="오르막">${k ? "+" + Math.round(r.s.up / 10) * 10 + " m" : ""}</td><td class="num" data-l="걷는 시간">${k ? durKo(r.walk) : ""}</td><td class="num" data-l="도착 예정">${hm(r.arrive)}</td><td>${info}</td></tr>`;
+    html += `<tr class="${r.i === 4 ? "turn" : ""}"><td class="num t" data-l="도착 예정">${hm(r.arrive)}</td><td><span class="g" style="background:${gc}"></span>${name}</td><td class="num" data-l="구간 거리">${k ? (r.s.d / 1000).toFixed(1) + " km" : ""}</td><td class="num" data-l="오르막">${k ? "+" + Math.round(r.s.up / 10) * 10 + " m" : ""}</td><td class="num" data-l="걷는 시간">${k ? durKo(r.walk) : ""}</td><td>${info}</td></tr>`;
   });
-  html += `<tr class="total"><td>합계</td><td class="num" data-l="거리">14.7 km</td><td class="num" data-l="오르막">+1,180 m</td><td class="num" data-l="걷는 시간">${durKo(SCHED.moving)}</td><td class="num" data-l="복귀">${hm(SCHED.end)}</td><td>휴식 포함 총 ${durKo(SCHED.end - SCHED.start)}</td></tr>`;
+  html += `<tr class="total"><td class="num t" data-l="복귀">${hm(SCHED.end)}</td><td>합계</td><td class="num" data-l="거리">14.7 km</td><td class="num" data-l="오르막">+1,180 m</td><td class="num" data-l="걷는 시간">${durKo(SCHED.moving)}</td><td>휴식 포함 총 ${durKo(SCHED.end - SCHED.start)}</td></tr>`;
   tb.innerHTML = html;
   document.getElementById("pace-note").textContent = `${PACES[SCHED.key || "std"].label} 기준. ${hm(SCHED.start)} 출발 시 ${hm(SCHED.end)} 복귀, 일몰 17:27`;
 }
