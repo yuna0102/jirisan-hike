@@ -118,7 +118,8 @@ button { font: inherit; color: inherit; }
 .card.nophoto { grid-template-columns: minmax(0, 1fr); }
 .card[data-on="0"] { opacity: 0; }
 .card .ph { position: relative; aspect-ratio: 1.5; border: 0; padding: 0; border-radius: 6px; background: var(--panel-2) center / cover no-repeat; filter: saturate(.92) contrast(1.02); cursor: zoom-in; overflow: hidden; }
-.card .ph span { position: absolute; right: 5px; bottom: 5px; font: 500 9.5px/1 var(--f-mono); letter-spacing: .08em; padding: 4px 6px 3px; border-radius: 3px; background: rgba(13,15,12,.78); color: var(--lime); }
+.card .ph span { position: absolute; right: 4px; bottom: 4px; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: rgba(13,15,12,.7); color: var(--cream); }
+.card .ph span svg { width: 11px; height: 11px; }
 .card .ph:hover { filter: none; }
 
 /* photo viewer */
@@ -574,6 +575,7 @@ footer.wrap { padding-block: 40px 56px; display: flex; flex-direction: column; g
 .hotel .links { margin-top: auto; display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; }
 /* simple view: hide sub copy and prices (?simple=1, ?view=simple, #simple) */
 [data-view="simple"] .js-sub, [data-view="simple"] .js-price { display: none !important; }
+:root:not([data-view="simple"]) .simple-only { display: none !important; }
 
 .food { background: var(--panel); border-radius: 14px 10px 16px 9px / 10px 15px 9px 14px; overflow: hidden; display: flex; flex-direction: column; }
 .food .fph { position: relative; aspect-ratio: 4 / 3; background: var(--panel-2) center / cover no-repeat; filter: sepia(.22) saturate(.85) contrast(1.06); }
@@ -773,7 +775,7 @@ html, body { overflow-x: clip; }
       <div><div class="word">SEOBUK <br>RIDGE</div><div class="sub">서북능선 성삼재 ↔ 정령치</div></div>
     </div>
     <div class="card nophoto" id="card" data-on="1" aria-live="polite">
-      <button class="ph" id="card-ph" type="button" hidden aria-label="사진 크게 보기"><span>크게 보기</span></button>
+      <button class="ph" id="card-ph" type="button" hidden aria-label="사진 크게 보기"><span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7 1.5h3.5V5M10.5 1.5 6.8 5.2M5 10.5H1.5V7M1.5 10.5l3.7-3.7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
       <div class="body">
         <div class="top"><div class="tags" id="card-tags"><i>OVERVIEW</i></div><span class="next" id="card-n" hidden></span></div>
         <h3 id="card-h">지리산 국립공원</h3>
@@ -939,7 +941,7 @@ html, body { overflow-x: clip; }
       <ol class="steps" style="--done: 25%">
         <li class="step done"><span class="node">✓</span><span class="when">완료</span><h3>13일 숙소 예약</h3><p>더케이 지리산가족호텔</p><a href="https://www.thek-hotel.co.kr/jrmh/company/locationGuide.do">출처: 호텔 위치 안내</a></li>
         <li class="step done"><span class="node">✓</span><span class="when">완료</span><h3>성삼재 도로 토요일 통행</h3><p>주말 정상 통행, 평일은 통제</p><a href="https://res.knps.or.kr/community/board/notice/boardDetail.do?seq=28980">출처: 국립공원공단 공지</a> <a href="https://www.kukinews.com/article/view/kuk202610130129">국민일보</a></li>
-        <li class="step next"><span class="node">3</span><span class="when">지금 처리</span><h3>14일 숙소 예약</h3><p>온천, 트윈, 15만 원 이하</p><a href="#stays">숙소 후보 보기</a></li>
+        <li class="step next"><span class="node">3</span><span class="when">지금 처리</span><h3>14일 숙소 예약</h3><p>온천, 트윈, <span class="js-price">15만 원 이하</span><span class="simple-only">40만 원 이하</span></p><a href="#stays">숙소 후보 보기</a></li>
         <li class="step"><span class="node">4</span><span class="when">11.12 목까지</span><h3>14일 저녁 식당 예약</h3><p>백숙은 전화로 미리 주문</p><a href="#food">저녁 후보 보기</a></li>
         <li class="step"><span class="node">5</span><span class="when">11.13 금 저녁</span><h3>탐방로 통제 및 입산 시간</h3><p>15일부터 산불조심기간</p><a href="https://reservation.knps.or.kr/">출처: 국립공원 예약시스템</a></li>
         <li class="step"><span class="node">6</span><span class="when">11.14 토 07:20</span><h3>산악 날씨 및 결빙</h3><p>영하권이면 아이젠 필수</p><a href="https://www.weather.go.kr/">출처: 기상청 날씨누리</a></li>
@@ -1007,7 +1009,29 @@ html, body { overflow-x: clip; }
     <div class="sec-head"><h2>11월 14일 숙소 후보</h2><span class="eyebrow">Stay / Night 2</span><p class="js-sub">온천, 트윈, 15만 원 이하, 식당까지 도보를 기준으로 골랐습니다. 옆으로 넘겨 비교합니다.</p></div>
     <div class="rail-box">
       <div class="rail" tabindex="0" aria-label="숙소 후보 목록">
-        <article class="hotel pick">
+        <article class="hotel simple-only" data-o="1" data-s="1">
+          <div class="th empty"><svg aria-hidden="true"><use href="#sun"/></svg><span class="rank">추천</span></div>
+          <div class="body">
+            <h3>한화리조트 지리산</h3>
+            <p class="js-sub">화엄사 입구의 4성급 리조트, 성삼재까지 차로 약 30분</p>
+            <div class="rates"><span class="rate k"><b>카카오</b><small>확인 필요</small></span><span class="rate n"><b>네이버</b><small>확인 필요</small></span></div>
+            <div class="conds"><div class="cond"><span>온천</span><span class="c">온천 사우나 확인 필요</span></div><div class="cond"><span>트윈</span><span class="c">객실 확인 필요</span></div><div class="cond js-price"><span>가격</span><span class="c">날짜별 조회 필요</span></div><div class="cond"><span>저녁</span><span class="n">차량 필요</span></div></div>
+            <span class="meta">마산면 화엄사로 464 / 061-782-2171</span>
+            <div class="links"><a href="https://map.naver.com/p/search/%ED%95%9C%ED%99%94%EB%A6%AC%EC%A1%B0%ED%8A%B8%20%EC%A7%80%EB%A6%AC%EC%82%B0">네이버 지도</a><a href="https://www.hanwharesort.co.kr/">공식 홈페이지</a></div>
+          </div>
+        </article>
+        <article class="hotel simple-only" data-o="2" data-s="2">
+          <div class="th empty"><svg aria-hidden="true"><use href="#sun"/></svg><span class="rank">추천</span></div>
+          <div class="body">
+            <h3>켄싱턴리조트 지리산하동</h3>
+            <p class="js-sub">객실에서 지리산이 보이는 리조트, 15일 남사예담촌 가는 길목</p>
+            <div class="rates"><span class="rate k"><b>카카오</b><small>확인 필요</small></span><span class="rate n"><b>네이버</b><small>확인 필요</small></span></div>
+            <div class="conds"><div class="cond"><span>온천</span><span class="c">사우나 확인 필요</span></div><div class="cond"><span>트윈</span><span class="c">체크인 때 배정</span></div><div class="cond js-price"><span>가격</span><span class="y">약 10만~21만원</span></div><div class="cond"><span>저녁</span><span class="c">리조트 주변 확인</span></div></div>
+            <span class="meta">경남 하동군 / 성삼재까지 차로 약 1시간</span>
+            <div class="links"><a href="https://map.naver.com/p/search/%EC%BC%84%EC%8B%B1%ED%84%B4%EB%A6%AC%EC%A1%B0%ED%8A%B8%20%EC%A7%80%EB%A6%AC%EC%82%B0%ED%95%98%EB%8F%99">네이버 지도</a><a href="https://www.booking.com/hotel/kr/kensington-resort-hadong.html">예약 사이트</a></div>
+          </div>
+        </article>
+        <article class="hotel pick" data-o="3" data-s="3">
           <div class="th" data-ph="h_casa"><span class="rank">추천 1</span></div>
           <div class="body">
             <h3>호텔까사베르데</h3>
@@ -1018,7 +1042,7 @@ html, body { overflow-x: clip; }
             <div class="links"><a href="https://place.map.kakao.com/1892880385">카카오맵</a><a href="https://map.naver.com/p/search/%EA%B5%AC%EB%A1%80%20%ED%98%B8%ED%85%94%EA%B9%8C%EC%82%AC%EB%B2%A0%EB%A5%B4%EB%8D%B0">네이버 지도</a></div>
           </div>
         </article>
-        <article class="hotel">
+        <article class="hotel" data-o="4" data-s="4">
           <div class="th" data-ph="h_grand"><span class="rank">후보 2</span></div>
           <div class="body">
             <h3>구례 그랜드호텔</h3>
@@ -1029,7 +1053,7 @@ html, body { overflow-x: clip; }
             <div class="links"><a href="https://place.map.kakao.com/8215380">카카오맵</a><a href="https://map.naver.com/p/search/%EA%B5%AC%EB%A1%80%20%EA%B7%B8%EB%9E%9C%EB%93%9C%ED%98%B8%ED%85%94">네이버 지도</a></div>
           </div>
         </article>
-        <article class="hotel">
+        <article class="hotel" data-o="5" data-s="6">
           <div class="th" data-ph="h_nogodan"><span class="rank">후보 3</span></div>
           <div class="body">
             <h3>노고단게스트하우스&호텔</h3>
@@ -1040,7 +1064,7 @@ html, body { overflow-x: clip; }
             <div class="links"><a href="https://place.map.kakao.com/598729228">카카오맵</a><a href="https://map.naver.com/p/search/%EA%B5%AC%EB%A1%80%20%EB%85%B8%EA%B3%A0%EB%8B%A8%EA%B2%8C%EC%8A%A4%ED%8A%B8%ED%95%98%EC%9A%B0%EC%8A%A4%26%ED%98%B8%ED%85%94">네이버 지도</a></div>
           </div>
         </article>
-        <article class="hotel">
+        <article class="hotel" data-o="6" data-s="5">
           <div class="th" data-ph="h_spa"><span class="rank">후보 4</span></div>
           <div class="body">
             <h3>지리산온천랜드</h3>
@@ -1051,7 +1075,7 @@ html, body { overflow-x: clip; }
             <div class="links"><a href="https://map.naver.com/p/search/%EA%B5%AC%EB%A1%80%20%EC%A7%80%EB%A6%AC%EC%82%B0%EC%98%A8%EC%B2%9C%EB%9E%9C%EB%93%9C">네이버 지도</a></div>
           </div>
         </article>
-        <article class="hotel">
+        <article class="hotel" data-o="7" data-s="7">
           <div class="th" data-ph="h_yaksu"><span class="rank">후보 5</span></div>
           <div class="body">
             <h3>산동약수장</h3>
@@ -1062,7 +1086,7 @@ html, body { overflow-x: clip; }
             <div class="links"><a href="https://place.map.kakao.com/15440226">카카오맵</a><a href="https://map.naver.com/p/search/%EA%B5%AC%EB%A1%80%20%EC%82%B0%EB%8F%99%EC%95%BD%EC%88%98%EC%9E%A5">네이버 지도</a></div>
           </div>
         </article>
-        <article class="hotel">
+        <article class="hotel" data-o="8" data-s="8">
           <div class="th empty"><svg aria-hidden="true"><use href="#sun"/></svg><span class="rank">대안</span></div>
           <div class="body">
             <h3>구례 지리산리조트</h3>
@@ -1451,7 +1475,23 @@ if (document.fonts) document.fonts.ready.then(drawRidge);
 (function () {
   const q = new URLSearchParams(location.search);
   const on = () => q.get("simple") === "1" || q.get("view") === "simple" || /(^|[#&])simple\b/.test(location.hash);
-  const apply = () => { if (on()) document.documentElement.dataset.view = "simple"; else delete document.documentElement.dataset.view; };
+  // the simple view widens the stay budget to 400,000 won, so its card order differs
+  const sortStays = simple => {
+    const rail = document.querySelector("#stays .rail"); if (!rail) return;
+    const key = simple ? "s" : "o";
+    const cards = [...rail.querySelectorAll(".hotel")].sort((x, y) => x.dataset[key] - y.dataset[key]);
+    let n = 0;
+    cards.forEach(c => {
+      rail.appendChild(c);
+      const r = c.querySelector(".rank"); if (!r) return;
+      r.dataset.orig ??= r.textContent;
+      if (!simple) { r.textContent = r.dataset.orig; c.classList.toggle("pick", r.textContent.startsWith("추천")); return; }
+      if (r.dataset.orig === "대안") return;
+      n++; r.textContent = n === 1 ? "추천 1" : "후보 " + n; c.classList.toggle("pick", n === 1);
+    });
+    rail.scrollLeft = 0;
+  };
+  const apply = () => { const simple = on(); if (simple) document.documentElement.dataset.view = "simple"; else delete document.documentElement.dataset.view; sortStays(simple); };
   apply(); addEventListener("hashchange", apply);
 })();
 
@@ -1905,7 +1945,7 @@ document.querySelectorAll(".rail-box").forEach(box => {
       setTimeout(autoStart, 400);
     } else {
       immersiveOff = false; setImmersive(false);
-      if (!st.started) { $("ov-rotate").hidden = false; document.documentElement.style.overflow = "hidden"; }
+      if (!st.started) setTimeout(autoStart, 1400); // portrait is the default view, no rotate prompt
     }
   }
   let immersiveOff = false;
