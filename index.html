@@ -1,3 +1,10 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f0c">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>성삼재에서 정령치까지</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -209,6 +216,14 @@ button { font: inherit; color: inherit; }
 .btn-big { background: var(--lime); color: #15170c; border: 0; border-radius: 999px; padding: 12px 20px; font-weight: 700; font-size: 15px; cursor: pointer; }
 .btn-ghost { background: transparent; color: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 11px 18px; font-size: 14px; cursor: pointer; }
 .rotate { text-align: center; align-items: center; }
+#ov-rotate { position: fixed; z-index: 60; place-items: center !important; align-content: center !important; background: rgba(8,10,7,.94); padding-top: max(24px, env(safe-area-inset-top, 0px)); padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)); }
+#ov-rotate .panel { width: min(520px, 100%); background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; gap: 22px; padding: 0; }
+#ov-rotate .phone { width: 92px; height: 150px; border-width: 4px; border-radius: 18px; margin-bottom: 10px; }
+#ov-rotate .phone::after { width: 20px; height: 4px; margin-left: -10px; bottom: 10px; }
+#ov-rotate h2 { font-size: clamp(28px, 8vw, 40px); line-height: 1.2; text-wrap: balance; }
+#ov-rotate p { font-size: 17px; }
+#ov-rotate .acts { width: 100%; flex-direction: column; gap: 10px; margin-top: 8px; }
+#ov-rotate .acts > button { width: 100%; min-height: 54px; font-size: 16px; }
 .rotate .phone { width: 52px; height: 84px; border: 3px solid var(--cream); border-radius: 10px; position: relative; animation: turn 2.4s ease-in-out infinite; }
 .rotate .phone::after { content: ""; position: absolute; left: 50%; bottom: 6px; width: 12px; height: 3px; margin-left: -6px; border-radius: 2px; background: var(--cream); }
 @keyframes turn { 0%, 25% { transform: rotate(0); } 55%, 80% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
@@ -650,7 +665,6 @@ html, body { overflow-x: clip; }
   .viewer .info p { font-size: 14px; }
   .viewer .big .nav { width: 44px; height: 44px; }
   .viewer-wrap .x { width: 44px; height: 44px; right: 6px; top: 6px; z-index: 2; }
-  .rotate h2 { font-size: 21px; }
 
   /* facts */
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1866,12 +1880,17 @@ document.querySelectorAll(".rail-box").forEach(box => {
   function autoStart() { if (!st.started && !reduce) begin(); }
   function orient() {
     if (!coarse) return;
-    if (land.matches) { $("ov-rotate").hidden = true; setTimeout(autoStart, 600); }
-    else if (!st.started) $("ov-rotate").hidden = false;
+    if (land.matches) {
+      const wasShown = !$("ov-rotate").hidden;
+      $("ov-rotate").hidden = true; document.documentElement.style.overflow = "";
+      if (wasShown || !st.started) setTimeout(() => { $("sim").scrollIntoView({ block: "start" }); autoStart(); }, 400);
+    } else if (!st.started) { $("ov-rotate").hidden = false; document.documentElement.style.overflow = "hidden"; }
   }
+  document.body.appendChild($("ov-rotate")); // escape the simulator box so the cover fills the screen
+  const closeRotate = () => { $("ov-rotate").hidden = true; document.documentElement.style.overflow = ""; };
   land.addEventListener ? land.addEventListener("change", orient) : land.addListener(orient);
-  $("b-portrait").addEventListener("click", () => { $("ov-rotate").hidden = true; begin(); });
-  $("b-skip").addEventListener("click", () => { $("ov-rotate").hidden = true; toPlan(); });
+  $("b-portrait").addEventListener("click", () => { closeRotate(); begin(); });
+  $("b-skip").addEventListener("click", () => { closeRotate(); toPlan(); });
   if (coarse) orient(); else setTimeout(autoStart, 1400);
 
   // pause progress while the simulator is scrolled away
@@ -1960,3 +1979,5 @@ document.querySelectorAll(".rail-box").forEach(box => {
   requestAnimationFrame(frame);
 })();
 </script>
+
+</html>
