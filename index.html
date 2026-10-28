@@ -1519,7 +1519,7 @@ if (document.fonts) document.fonts.ready.then(drawRidge);
 /* ---------- view mode: ?simple=1, ?view=simple or #simple hides sub copy and prices ---------- */
 (function () {
   const q = new URLSearchParams(location.search);
-  const on = () => q.get("simple") === "1" || q.get("view") === "simple" || /(^|[#&])simple\b/.test(location.hash);
+  const on = () => (q.has("simple") && q.get("simple") !== "0") || q.get("view") === "simple" || /(^|[#&])simple\b/.test(location.hash);
   // the simple view widens the stay budget to 400,000 won, so its card order differs
   const sortStays = simple => {
     const rail = document.querySelector("#stays .rail"); if (!rail) return;
