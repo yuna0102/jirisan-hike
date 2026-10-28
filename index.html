@@ -1813,7 +1813,7 @@ document.querySelectorAll(".rail-box").forEach(box => {
     hideOverlays(); $("scrollhint").hidden = true; st.resume = null;
     st.ended = false; st.started = true; st.auto = false;
     st.phase = "drive"; st.d = 0; st.m = 0; st.playing = true;
-    startTween(2.2); st.hold = performance.now() + (reduce ? 0 : 1600);
+    startTween(1.4); st.hold = performance.now() + (reduce ? 0 : 500);
     paintPlay();
   }
   function jump(phase, v) {
@@ -1936,7 +1936,7 @@ document.querySelectorAll(".rail-box").forEach(box => {
   // portrait phones: ask to rotate, start when landscape
   const coarse = matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) < 600;
   const land = matchMedia("(orientation: landscape)");
-  function autoStart() { if (!st.started && !reduce) begin(); }
+  function autoStart() { if (!st.started) begin(); }
   function orient() {
     if (!coarse) return;
     if (land.matches) {
@@ -1945,7 +1945,7 @@ document.querySelectorAll(".rail-box").forEach(box => {
       setTimeout(autoStart, 400);
     } else {
       immersiveOff = false; setImmersive(false);
-      if (!st.started) setTimeout(autoStart, 1400); // portrait is the default view, no rotate prompt
+      if (!st.started) setTimeout(autoStart, 200); // portrait is the default view: the drive starts right away
     }
   }
   let immersiveOff = false;
@@ -1960,7 +1960,7 @@ document.querySelectorAll(".rail-box").forEach(box => {
   land.addEventListener ? land.addEventListener("change", orient) : land.addListener(orient);
   $("b-portrait").addEventListener("click", () => { closeRotate(); begin(); });
   $("b-skip").addEventListener("click", () => { closeRotate(); toPlan(); });
-  if (coarse) orient(); else setTimeout(autoStart, 1400);
+  if (coarse) orient(); else setTimeout(autoStart, 200);
 
   // pause progress while the simulator is scrolled away
   new IntersectionObserver(es => es.forEach(en => { st.visible = en.isIntersecting; })).observe(sim);
