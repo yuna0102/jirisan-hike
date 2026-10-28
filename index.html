@@ -204,7 +204,7 @@ button { font: inherit; color: inherit; }
 #g-grade[data-g="mid"] { color: var(--mid); }
 #g-grade[data-g="hard"] { color: var(--hard); }
 .track { position: relative; min-height: 64px; }
-.track canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: ew-resize; touch-action: none; }
+.track canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 .track .cap { position: absolute; right: 0; top: -2px; font: 400 10px var(--f-mono); color: var(--fog); letter-spacing: .06em; pointer-events: none; }
 
 .overlay { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); background: rgba(8,10,7,.55); }
@@ -659,12 +659,31 @@ html, body { overflow-x: clip; }
   .lbl .tag { font-size: 9px; }
   .glegend { top: 10px; bottom: auto; right: auto; left: max(10px, env(safe-area-inset-left, 0px)); padding: 5px 9px; gap: 9px; font-size: 11px; }
   .row1 { gap: 8px; }
+  .row1 #b-all { margin-left: auto; }
   .play { min-height: 44px; }
   .iconbtn { min-height: 44px; min-width: 44px; justify-content: center; }
   .stages { -webkit-mask-image: linear-gradient(to right, transparent, #000 14px, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(to right, transparent, #000 14px, #000 calc(100% - 22px), transparent); scroll-snap-type: x proximity; padding-inline: 6px; }
   .stages button { min-height: 44px; font-size: 13px; scroll-snap-align: center; }
   .stages button.has-ph { padding: 3px 12px 3px 4px; }
   .stages .thumb { width: 32px; height: 32px; }
+
+  /* route roadmap under the graph */
+  .cockpit > .stages { flex: none; padding: 8px 0 2px; border-top: 1px solid var(--line); scroll-snap-type: x proximity; }
+  .cockpit > .stages ol { align-items: flex-start; }
+  .cockpit > .stages li { position: relative; flex-direction: column; width: 74px; flex: none; }
+  .cockpit > .stages li + li::before { display: none; }
+  .cockpit > .stages li::after { content: ""; position: absolute; top: 21px; left: 50%; width: 100%; height: 2px; background: var(--line); }
+  .cockpit > .stages li:last-child::after { display: none; }
+  .cockpit > .stages li:has(> .done)::after { background: var(--lime); opacity: .7; }
+  .cockpit > .stages button, .cockpit > .stages button.has-ph, .cockpit > .stages button.now { position: relative; z-index: 1; width: 100%; min-height: 0; padding: 4px 2px; border: 0; border-radius: 0; background: transparent; flex-direction: column; gap: 6px; font-size: 11.5px; line-height: 1.2; color: var(--fog); white-space: nowrap; }
+  .cockpit > .stages button::before { display: block; width: 12px; height: 12px; margin-top: 12px; margin-bottom: 12px; box-sizing: border-box; background: var(--night); border: 2px solid var(--line); }
+  .cockpit > .stages button.has-ph::before { display: none; }
+  .cockpit > .stages .thumb { width: 36px; height: 36px; border: 2px solid var(--night); }
+  .cockpit > .stages button.done { color: var(--cream); }
+  .cockpit > .stages button.done::before { background: var(--lime); border-color: var(--lime); }
+  .cockpit > .stages button.now { color: var(--lime); font-weight: 700; }
+  .cockpit > .stages button.now::before { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 4px rgba(232,239,154,.25); }
+  .cockpit > .stages button.now .thumb { border-color: var(--lime); box-shadow: 0 0 0 3px rgba(232,239,154,.25); }
   .gauge small { font-size: 10px; }
   .gauge strong { font-size: 18px; }
   .card h3 { font-size: 18px; }
@@ -812,7 +831,7 @@ html, body { overflow-x: clip; }
         <div class="gauge"><small id="g-dist-l">주행</small><strong id="g-dist">0.0</strong><em id="g-dist-u">/ 20.6 km</em></div>
         <div class="gauge"><small>경사</small><strong id="g-grade">0</strong><em>%</em></div>
       </div>
-      <div class="track"><canvas id="profile" aria-label="등산로 고도 그래프. 누르거나 끌어서 위치를 옮깁니다"></canvas></div>
+      <div class="track"><canvas id="profile" aria-label="등산로 고도와 경사 그래프"></canvas></div>
     </div>
   </div>
 
@@ -825,7 +844,11 @@ html, body { overflow-x: clip; }
         <div><small>소요 시간</small><strong id="sm-dur">3:05</strong></div>
         <div><small>도착 예정</small><strong id="sm-eta">11:45</strong></div>
       </div>
-            <div class="acts"><button class="btn-big" id="b-stay" type="button">내려서 자세히 보기</button><button class="btn-ghost" id="b-down" type="button">하산 경로 보기</button></div>
+      <div class="more">
+        <button class="btn-big" id="b-stay" type="button">내려서 자세히 보기</button>
+        <svg class="chev" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l6 6 6-6M6 12l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <button class="replay" id="b-down" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5h9a5 5 0 0 1 0 10H6M9 11l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>하산 경로 보기</button>
     </div>
   </div>
 
@@ -1791,14 +1814,22 @@ document.querySelectorAll(".rail-box").forEach(box => {
     if ($("ov-photo").hidden) return;
     if (e.key === "Escape") pvClose(); else if (e.key === "ArrowLeft") pvShow(pvIdx - 1); else if (e.key === "ArrowRight") pvShow(pvIdx + 1);
   });
+  const navStages = stagesEl.closest(".stages"), phoneMq = matchMedia("(max-width: 700px)");
+  function placeStages() {
+    if (phoneMq.matches) document.querySelector(".cockpit").appendChild(navStages);
+    else $("b-all").before(navStages);
+    lastStage = -2;
+  }
+  phoneMq.addEventListener ? phoneMq.addEventListener("change", placeStages) : phoneMq.addListener(placeStages);
   let lastStage = -2;
+  placeStages();
   function paintStages() {
     const k = stageIndex();
     if (k === lastStage) return; lastStage = k;
-    STAGES.forEach((s, i) => { s.b.className = i < k ? "done" : i === k ? "now" : ""; });
+    STAGES.forEach((s, i) => { s.b.classList.toggle("done", i < k); s.b.classList.toggle("now", i === k); });
     if (k >= 0) {
       const box = STAGES[k].b.closest(".stages"), b = STAGES[k].b;
-      if (box) box.scrollTo({ left: b.offsetLeft - (box.clientWidth - b.offsetWidth) / 2, behavior: reduce ? "auto" : "smooth" });
+      if (box) { const br = b.getBoundingClientRect(), xr = box.getBoundingClientRect(); box.scrollTo({ left: box.scrollLeft + br.left - xr.left - (box.clientWidth - br.width) / 2, behavior: reduce ? "auto" : "smooth" }); }
     }
   }
 
@@ -1905,18 +1936,6 @@ document.querySelectorAll(".rail-box").forEach(box => {
 
   // profile scrubber
   const pc = $("profile"), pctx = pc.getContext("2d");
-  let scrubbing = false;
-  function seek(e) {
-    const r = pc.getBoundingClientRect();
-    const m = Math.max(0, Math.min(TOTAL - 1, (e.clientX - r.left - 4) / (r.width - 8) * TOTAL));
-    hideOverlays(); $("scrollhint").hidden = true; st.resume = null; st.ended = false; st.started = true; st.auto = false;
-    const ph = st.phase === "down" ? "down" : "up";
-    if (st.phase !== ph) { st.phase = ph; startTween(1.2); } else st.tween = null;
-    st.m = m; st.playing = false; paintPlay();
-  }
-  pc.addEventListener("pointerdown", e => { scrubbing = true; pc.setPointerCapture(e.pointerId); seek(e); });
-  pc.addEventListener("pointermove", e => { if (scrubbing) seek(e); });
-  pc.addEventListener("pointerup", () => { scrubbing = false; });
   function drawProfile() {
     const dpr = Math.min(2, window.devicePixelRatio || 1), w = pc.clientWidth, h = pc.clientHeight;
     if (!w || !h) return;
